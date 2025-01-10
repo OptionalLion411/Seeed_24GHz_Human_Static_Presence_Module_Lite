@@ -1,6 +1,8 @@
 #ifndef _HUMANSTATICLITE_H__
 #define _HUMANSTATICLITE_H__
 
+#include "Arduino.h"
+
 #define MESSAGE_HEAD1 0x53       //Data frame header1
 #define MESSAGE_HEAD2 0x59       //Data frame header2
 
@@ -29,7 +31,6 @@
 #define DETAILDIRECT  0x06       //Human movement trends
 #define DETAILSIGN    0x07       //Body Signs Parameters
 
-//Return status, Use in arduino
 #define SOMEONE       0x01       //There are people
 #define NOONE         0x02       //No one
 #define NOTHING       0x03       //No message
@@ -44,28 +45,29 @@
 
 #define SEEED_HUMAN_UNIT 0.5     //Calculate unit steps
 
-//Reset data frame
 const unsigned char reset_frame[10] = {0x53, 0x59, 0x01, 0x02, 0x00, 0x01, 0x0F, 0xBF, 0x54, 0x43};
 
-class HumanStaticLite{
+class HumanStaticLite {
     private:
-        Stream *stream;               // e.g. SoftwareSerial or Serial1
-        boolean newData;
+        Stream *stream;
+        bool newData = false;
         byte dataLen;
-        unsigned char Msg[20] = {0};  //Storage of the data frames returned by the radar up to a maximum length of 20.
+        unsigned char Msg[20] = {0};
         int count = 0;
-        int checkdata_len = 2;        //Without cyclic sending, number of frames sent
-        void data_printf(const unsigned char* buff, int len);
-        float decodeVal_func(int val, bool decode = false);
+        int checkdata_len = 2;
+        void dPrintf(const unsigned char* buff, int len);
+        float decodeVal(int val);
+        float decodeSpeed(int val);
     public:
         int radarStatus = 0, bodysign_val = 0, static_val = 0, dynamic_val = 0;
-        float dis_static = 0.0, dis_move = 0.0, speed = 0.0;
+        float dist_static = 0.0, dist_move = 0.0, speed = 0.0;
         HumanStaticLite(Stream *s);
-        void recvRadarBytes();
+        void recvData();
+        void parseData(bool bodysign);
+        void fetchFrame(bool bodysign = false);
+        void setMode(const unsigned char* buff, int len, bool cyclic = false);
+        void reset();
         void showData();
-        void HumanStatic_func(bool bodysign = false);
-        void checkSetMode_func(const unsigned char* buff, int len, bool cyclic = false);
-        void reset_func();
 };
 
 #endif
