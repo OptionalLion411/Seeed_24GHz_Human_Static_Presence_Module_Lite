@@ -114,7 +114,7 @@ void HumanStaticLite::fetchFrame(bool bodysign) {
   parseData(bodysign);
 }
 
-void HumanStaticLite::setMode(const unsigned char* buff, int len, bool cyclic) {
+void HumanStaticLite::sendData(const unsigned char* buff, int len, bool cyclic) {
   if (cyclic || count < checkdata_len) {
     if (cyclic || count < 1) {
       stream->write(buff, len);
@@ -124,14 +124,6 @@ void HumanStaticLite::setMode(const unsigned char* buff, int len, bool cyclic) {
       recvData();
       delay(20);
     } while(!(this->newData));
-    //    if (cyclic || count < 1) {
-    //      Serial.print("  Sent  ---> ");
-    //      data_printf(buff, len);
-    //    }
-    //    if (count%2 == 1){
-    //      Serial.print("Receive <--- ");
-    //      showData();
-    //    }
     this->newData = false;
   }
   count++;

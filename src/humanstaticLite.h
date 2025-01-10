@@ -65,7 +65,7 @@ class HumanStaticLite {
         void recvData();
         void parseData(bool bodysign);
         void fetchFrame(bool bodysign = false);
-        void setMode(const unsigned char* buff, int len, bool cyclic = false);
+        void sendData(const unsigned char* buff, int len, bool cyclic = false);
         void reset();
         void showData();
 };
